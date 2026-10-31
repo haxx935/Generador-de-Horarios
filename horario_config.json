@@ -1,0 +1,32 @@
+{
+  "profesores": [
+    {"nombre": "ana", "materia": "fisica"},
+    {"nombre": "carlos", "materia": "programacion"},
+    {"nombre": "sofia", "materia": "matematicas"},
+    {"nombre": "miguel", "materia": "bases_de_datos"}
+  ],
+  "disponibilidades": [
+    {"profesor": "ana", "dia": "lunes", "hora": "h_8_10"},
+    {"profesor": "carlos", "dia": "lunes", "hora": "h_8_10"},
+    {"profesor": "sofia", "dia": "martes", "hora": "h_10_12"},
+    {"profesor": "miguel", "dia": "miercoles", "hora": "h_12_14"}
+  ],
+  "salones": [
+    {"nombre": "lab_1", "capacidad": 20, "equipo": "computadoras"},
+    {"nombre": "aula_101", "capacidad": 40, "equipo": "proyector"},
+    {"nombre": "aula_102", "capacidad": 35, "equipo": "proyector"},
+    {"nombre": "lab_2", "capacidad": 25, "equipo": "computadoras"}
+  ],
+  "grupos": [
+    {"nombre": "grupo_a", "alumnos": 25, "materia": "fisica"},
+    {"nombre": "grupo_b", "alumnos": 15, "materia": "programacion"},
+    {"nombre": "grupo_c", "alumnos": 30, "materia": "matematicas"},
+    {"nombre": "grupo_d", "alumnos": 20, "materia": "bases_de_datos"}
+  ],
+  "requerimientos": [
+    {"materia": "fisica", "equipo": "proyector"},
+    {"materia": "programacion", "equipo": "computadoras"},
+    {"materia": "matematicas", "equipo": "proyector"},
+    {"materia": "bases_de_datos", "equipo": "computadoras"}
+  ]
+}

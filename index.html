@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Horarios Acad&eacute;micos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Generador de Horarios Acad&eacute;micos</h1>
+    <p>Sistema basado en programaci&oacute;n l&oacute;gica (Prolog)</p>
+  </header>
+
+  <main>
+    <section class="panel configuracion">
+      <h2>Configuraci&oacute;n</h2>
+      <div class="config-grid">
+
+        <!-- Profesores -->
+        <div class="config-card">
+          <h3>Profesores</h3>
+          <ul id="lista-profesores" class="lista-datos"></ul>
+          <div class="form-agregar">
+            <input type="text" id="input-prof-nombre" placeholder="Nombre">
+            <input type="text" id="input-prof-materia" placeholder="Materia">
+            <button type="button" id="btn-agregar-profesor" class="btn btn-sm btn-success">Agregar</button>
+          </div>
+        </div>
+
+        <!-- Grupos -->
+        <div class="config-card">
+          <h3>Grupos</h3>
+          <ul id="lista-grupos" class="lista-datos"></ul>
+          <div class="form-agregar">
+            <input type="text" id="input-grupo-nombre" placeholder="Nombre (grupo_a)">
+            <input type="number" id="input-grupo-alumnos" placeholder="Alumnos" min="1">
+            <input type="text" id="input-grupo-materia" placeholder="Materia">
+            <button type="button" id="btn-agregar-grupo" class="btn btn-sm btn-success">Agregar</button>
+          </div>
+        </div>
+
+        <!-- Salones -->
+        <div class="config-card">
+          <h3>Salones</h3>
+          <ul id="lista-salones" class="lista-datos"></ul>
+          <div class="form-agregar">
+            <input type="text" id="input-salon-nombre" placeholder="Nombre (lab_1)">
+            <input type="number" id="input-salon-capacidad" placeholder="Capacidad" min="1">
+            <input type="text" id="input-salon-equipo" placeholder="Equipo">
+            <button type="button" id="btn-agregar-salon" class="btn btn-sm btn-success">Agregar</button>
+          </div>
+        </div>
+
+        <!-- Disponibilidades -->
+        <div class="config-card">
+          <h3>Disponibilidades</h3>
+          <ul id="lista-disponibilidades" class="lista-datos"></ul>
+          <div class="form-agregar">
+            <input type="text" id="input-disp-profesor" placeholder="Profesor">
+            <select id="input-disp-dia">
+              <option value="lunes">Lunes</option>
+              <option value="martes">Martes</option>
+              <option value="miercoles">Mi&eacute;rcoles</option>
+              <option value="jueves">Jueves</option>
+              <option value="viernes">Viernes</option>
+            </select>
+            <select id="input-disp-hora">
+              <option value="h_8_10">08:00 - 10:00</option>
+              <option value="h_10_12">10:00 - 12:00</option>
+              <option value="h_12_14">12:00 - 14:00</option>
+              <option value="h_14_16">14:00 - 16:00</option>
+              <option value="h_16_18">16:00 - 18:00</option>
+            </select>
+            <button type="button" id="btn-agregar-disp" class="btn btn-sm btn-success">Agregar</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="panel acciones">
+      <div class="acciones-group">
+        <button type="button" id="btn-generar" class="btn btn-primary">Generar Horario</button>
+        <button type="button" id="btn-limpiar" class="btn btn-secondary">Limpiar Todo</button>
+      </div>
+      <div id="estado" class="estado"></div>
+    </section>
+
+    <section class="panel resultado" id="panel-resultado" hidden>
+      <h2>Horario Generado</h2>
+      <div class="tabla-horario" id="contenedor-horario"></div>
+      <div id="resumen" class="resumen"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Generador de Horarios - Programaci&oacute;n L&oacute;gica</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
