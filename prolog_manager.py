@@ -1,5 +1,7 @@
 import logging
 import os
+import re
+import threading
 from typing import List, Dict
 
 # En Windows, pyswip necesita saber dónde está SWI-Prolog (libswipl.dll).
@@ -13,18 +15,34 @@ from pyswip import Prolog
 
 logger = logging.getLogger(__name__)
 
-# Predicados que se modifican en tiempo de ejecución (nombre/aridad).
+# Días laborables y cupos máximos.
+DIAS_LABORALES = ["lunes", "martes", "miercoles", "jueves", "viernes"]
+MAX_CLASES_POR_MATERIA_DIA = 2
+MAX_CLASES_SEMANA = 4
+LIMITE_INFERENCIAS = 2000000
+
+# Predicados dinámicos (hechos y reglas que se cargan en tiempo de ejecución).
 PREDICADOS_DINAMICOS = [
     "profesor/2",
     "disponible/3",
     "salon/3",
+    "materia_util/2",
     "grupo/2",
     "grupo_materia/2",
     "requiere/2",
-    "clase_registrada/6",
+    "dia/1",
     "adecuado/3",
-    "sin_empalme/5",
     "asignacion_valida/6",
+    "generar_horario/1",
+    "sesiones_requeridas/1",
+    "contar_candidatos/2",
+    "ordenar_por_restriccion/2",
+    "asignar_una/5",
+    "asignar_todas/3",
+    "mejor_parcial/3",
+    "empalme_acumulado/6",
+    "cupo_dia_acumulado/5",
+    "cupo_semana_acumulado/4",
 ]
 
 
@@ -35,6 +53,8 @@ def atom(valor) -> str:
 
 
 class PrologManager:
+    _lock = threading.Lock()
+
     def __init__(self):
         self.prolog = Prolog()
         self._reglas_definidas = False
@@ -44,10 +64,10 @@ class PrologManager:
     # Preparación
     # ------------------------------------------------------------------
     def _preparar_base(self):
-        """Declara los predicados como dinámicos y borra datos previos.
+        """Declara predicados dinámicos y borra datos/reglas previas.
 
-        pyswip comparte un único motor Prolog por proceso, así que sin esto
-        dos instancias (por ejemplo en los tests) duplicarían hechos y reglas.
+        pyswip comparte un único motor Prolog por proceso; sin esta limpieza
+        dos instancias duplicarían hechos y reglas.
         """
         for pred in PREDICADOS_DINAMICOS:
             list(self.prolog.query(f"dynamic({pred})"))
@@ -56,36 +76,40 @@ class PrologManager:
             list(self.prolog.query(f"retractall({nombre}({variables}))"))
 
     def asegurar_reglas_definidas(self):
-        """Asegurar que las reglas lógicas estén definidas en Prolog"""
+        """Asegura que las reglas lógicas estén definidas en Prolog."""
         if not self._reglas_definidas:
             self._definir_reglas()
             self._reglas_definidas = True
 
     def _definir_reglas(self):
-        """Definir todas las reglas lógicas para el sistema de horarios"""
+        """Define todas las reglas lógicas del sistema de horarios en Prolog.
+
+        La búsqueda del horario vive ahora íntegramente en Prolog:
+        - generar_horario/1 es el punto de entrada.
+        - Las sesiones se construyen una a una con backtracking.
+        - El acumulado viaja como argumento de lista (no assertz/retractall
+          durante la búsqueda).
+
+        Nota: los strings pasados a assertz NO llevan punto final (.) porque
+        pyswip ya envuelve el término en assertz(...).
+        """
         logger.info("--- DECLARACIÓN DE REGLAS LÓGICAS ---")
 
-        # Cadenas crudas (r"...") para que \+ llegue tal cual a Prolog.
-
-        # 1. Adecuación de espacio (restricción dura)
+        # 1. Adecuación de salón (restricción dura).
         self.prolog.assertz(
             r"adecuado(Salon, Alumnos, Materia) :- "
             r"salon(Salon, Capacidad, EquipoSalon), "
             r"requiere(Materia, EquipoRequerido), "
+            r"(\+ materia_util(Salon, _) ; materia_util(Salon, Materia)), "
             r"Capacidad >= Alumnos, "
             r"EquipoSalon = EquipoRequerido"
         )
 
-        # 2. Negación por fallo: no debe existir una clase ya registrada con el
-        #    mismo profesor, grupo o salón en el mismo día y hora.
-        self.prolog.assertz(
-            r"sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- "
-            r"\+ clase_registrada(Prof, _, _, _, Dia, Hora), "
-            r"\+ clase_registrada(_, _, Grupo, _, Dia, Hora), "
-            r"\+ clase_registrada(_, _, _, Salon, Dia, Hora)"
-        )
+        # 2. Días laborables.
+        for d in DIAS_LABORALES:
+            self.prolog.assertz(f"dia({atom(d)})")
 
-        # 3. Asignación válida (sin considerar empalmes; eso lo hace sin_empalme)
+        # 3. asignacion_valida/6 (mantenida para consulta individual/compatibilidad).
         self.prolog.assertz(
             r"asignacion_valida(Prof, Materia, Grupo, Salon, Dia, Hora) :- "
             r"profesor(Prof, Materia), "
@@ -95,53 +119,185 @@ class PrologManager:
             r"adecuado(Salon, Alumnos, Materia)"
         )
 
+        # 4. Empalme contra el acumulado (lista de sesiones ya asignadas).
+        self.prolog.assertz(
+            r"empalme_acumulado(Prof, Grupo, Salon, Dia, Hora, Acumulado) :- "
+            r"member(sesion(Prof, _, _, _, Dia, Hora), Acumulado)"
+        )
+        self.prolog.assertz(
+            r"empalme_acumulado(Prof, Grupo, Salon, Dia, Hora, Acumulado) :- "
+            r"member(sesion(_, _, Grupo, _, Dia, Hora), Acumulado)"
+        )
+        self.prolog.assertz(
+            r"empalme_acumulado(Prof, Grupo, Salon, Dia, Hora, Acumulado) :- "
+            r"member(sesion(_, _, _, Salon, Dia, Hora), Acumulado)"
+        )
+
+        # 5. Cupo diario acumulado (máx. 2 horas de una misma materia al día por grupo).
+        self.prolog.assertz(
+            r"cupo_dia_acumulado(Grupo, Dia, Materia, Max, Acumulado) :- "
+            r"findall(_, member(sesion(_, Materia, Grupo, _, Dia, _), Acumulado), Lista), "
+            r"length(Lista, N), "
+            r"N < Max"
+        )
+
+        # 6. Cupo semanal acumulado (máx. 4 horas de una misma materia a la semana por grupo).
+        self.prolog.assertz(
+            r"cupo_semana_acumulado(Grupo, Materia, Max, Acumulado) :- "
+            r"findall(_, member(sesion(_, Materia, Grupo, _, _, _), Acumulado), Lista), "
+            r"length(Lista, N), "
+            r"N < Max"
+        )
+
+        # 7. Contar candidatos de una sesión (heurística: menos candidatos = más restringida).
+        self.prolog.assertz(
+            r"contar_candidatos(sesion(Prof, Materia, Grupo, _, _, _), N) :- "
+            r"findall(_, (dia(Dia), disponible(Prof, Dia, Hora), grupo(Grupo, Alumnos), adecuado(Salon, Alumnos, Materia)), C), "
+            r"length(C, N)"
+        )
+
+        # 8. Ordenar sesiones por restricción (keysort ascendente por conteo de candidatos).
+        self.prolog.assertz(
+            r"ordenar_por_restriccion(Sesiones, Ordenadas) :- "
+            r"maplist(contar_candidatos, Sesiones, Conteos), "
+            r"pairs_keys_values(Pares, Conteos, Sesiones), "
+            r"keysort(Pares, OrdenadasPares), "
+            r"pairs_values(OrdenadasPares, Ordenadas)"
+        )
+
+        # 9. Asignar una sesión dada el acumulado actual (genera Día/Hora/Salón por backtracking).
+        self.prolog.assertz(
+            r"asignar_una(Prof, Materia, Grupo, Acumulado, sesion(Prof, Materia, Grupo, Salon, Dia, Hora)) :- "
+            r"dia(Dia), "
+            r"disponible(Prof, Dia, Hora), "
+            r"grupo(Grupo, Alumnos), "
+            r"adecuado(Salon, Alumnos, Materia), "
+            r"\+ empalme_acumulado(Prof, Grupo, Salon, Dia, Hora, Acumulado), "
+            r"cupo_dia_acumulado(Grupo, Dia, Materia, 2, Acumulado), "
+            r"cupo_semana_acumulado(Grupo, Materia, 4, Acumulado)"
+        )
+
+        # 10. Asignar todas las sesiones recursivamente con backtracking y acumulado por lista.
+        self.prolog.assertz(
+            r"asignar_todas([], Horario, Horario)"
+        )
+        self.prolog.assertz(
+            r"asignar_todas([Sesion|Resto], Acumulado, Horario) :- "
+            r"Sesion = sesion(Prof, Materia, Grupo, _, _, _), "
+            r"asignar_una(Prof, Materia, Grupo, Acumulado, NuevaSesion), "
+            r"asignar_todas(Resto, [NuevaSesion|Acumulado], Horario)"
+        )
+
+        # 11. Mejor solución parcial (intenta asignar en orden, salta si no puede;
+        #     once/1 evita el backtracking exponencial al tomar una opción por sesión).
+        self.prolog.assertz(
+            r"mejor_parcial([], Acumulado, Acumulado)"
+        )
+        self.prolog.assertz(
+            r"mejor_parcial([Sesion|Resto], Acumulado, Mejor) :- "
+            r"Sesion = sesion(Prof, Materia, Grupo, _, _, _), "
+            r"(   once(asignar_una(Prof, Materia, Grupo, Acumulado, NuevaSesion)), "
+            r"    mejor_parcial(Resto, [NuevaSesion|Acumulado], Mejor) "
+            r";   mejor_parcial(Resto, Acumulado, Mejor) "
+            r")"
+        )
+
+        # 12. Predicado principal: generar_horario(Horario).
+        #     Construye sesiones (4 por par grupo-materia), ordena por restricción,
+        #     intenta solución completa con límite de inferencias, si falla devuelve
+        #     la mejor parcial.
+        self.prolog.assertz(
+            r"generar_horario(Horario) :- "
+            r"sesiones_requeridas(Sesiones), "
+            r"ordenar_por_restriccion(Sesiones, SesionesOrd), "
+            r"(   call_with_inference_limit(asignar_todas(SesionesOrd, [], Horario), "
+            f"{LIMITE_INFERENCIAS}, _) -> true "
+            r";   mejor_parcial(SesionesOrd, [], Horario) "
+            r")"
+        )
+
+        # 13. Sesiones requeridas: 4 por cada par (grupo, materia) con profesor disponible.
+        self.prolog.assertz(
+            r"sesiones_requeridas(Sesiones) :- "
+            r"findall(sesion(Prof, Materia, Grupo, _, _, _), "
+            r"(grupo_materia(Grupo, Materia), profesor(Prof, Materia), between(1, 4, _)), Sesiones)"
+        )
+
         logger.info("Reglas compiladas correctamente")
 
     # ------------------------------------------------------------------
     # Consultas
     # ------------------------------------------------------------------
-    def _sin_empalme(self, sol: Dict) -> bool:
-        consulta = (
-            f"sin_empalme({atom(sol['Prof'])}, {atom(sol['Grupo'])}, "
-            f"{atom(sol['Salon'])}, {atom(sol['Dia'])}, {atom(sol['Hora'])})"
-        )
-        return len(list(self.prolog.query(consulta, maxresult=1))) > 0
+    def generar_horario_prolog(self) -> List[Dict]:
+        """Llama UNA vez a generar_horario/1 y devuelve la lista de sesiones asignadas.
 
-    def _registrar_clase(self, sol: Dict):
-        self.prolog.assertz(
-            f"clase_registrada({atom(sol['Prof'])}, {atom(sol['Materia'])}, "
-            f"{atom(sol['Grupo'])}, {atom(sol['Salon'])}, "
-            f"{atom(sol['Dia'])}, {atom(sol['Hora'])})"
-        )
-
-    def obtener_asignaciones_validas(self) -> List[Dict]:
-        """Devuelve solo las asignaciones que pasan sin_empalme.
-
-        Flujo:
-          1. Se traen todas las candidatas de asignacion_valida/6.
-          2. Por cada una se consulta sin_empalme/5.
-          3. Si pasa, se registra con assertz(clase_registrada(...)), de modo
-             que la siguiente candidata ya "ve" la anterior.
+        Cada elemento es un dict con claves: Prof, Materia, Grupo, Salon, Dia, Hora.
         """
-        logger.info("Generando horario libre de conflictos...")
+        with self._lock:
+            list(self.prolog.query("retractall(clase_registrada(_, _, _, _, _, _))"))
+            resultados = list(self.prolog.query("generar_horario(Horario)"))
+            if not resultados:
+                return []
 
-        # Limpiar registros de ejecuciones anteriores
-        list(self.prolog.query("retractall(clase_registrada(_, _, _, _, _, _))"))
+            horario_term = resultados[0]["Horario"]
+            asignaciones: List[Dict] = []
+            for sesion_term in self._iterar_lista_prolog(horario_term):
+                args = self._args_de_termino(sesion_term)
+                if len(args) >= 6:
+                    asignaciones.append({
+                        "Prof": str(args[0]),
+                        "Materia": str(args[1]),
+                        "Grupo": str(args[2]),
+                        "Salon": str(args[3]),
+                        "Dia": str(args[4]),
+                        "Hora": str(args[5]),
+                    })
+            return asignaciones
 
-        # list() cierra la consulta; así podemos hacer assertz/queries después
-        candidatas = list(
-            self.prolog.query(
-                "asignacion_valida(Prof, Materia, Grupo, Salon, Dia, Hora)"
-            )
-        )
+    # --- utilidades internas para leer términos de pyswip -------------
+    @staticmethod
+    def _iterar_lista_prolog(term):
+        """Itera sobre una lista de Prolog devuelta por pyswip.
 
-        aceptadas: List[Dict] = []
-        for sol in candidatas:
-            if self._sin_empalme(sol):
-                self._registrar_clase(sol)
-                aceptadas.append(sol)
+        Maneja listas nativas de Python, términos encadenados
+        .(Cabeza, Cola), vacías [] y strings 'sesion(...)'.
+        """
+        if isinstance(term, list):
+            for elemento in term:
+                yield elemento
+            return
 
-        logger.info(
-            f"{len(aceptadas)} de {len(candidatas)} candidatas sin empalmes"
-        )
-        return aceptadas
+        functor = getattr(term, "functor", None)
+        args = getattr(term, "args", None)
+
+        if functor == "[]" or (isinstance(term, str) and term == "[]"):
+            return
+        if functor == "." and args and len(args) == 2:
+            cabeza, cola = args
+            yield cabeza
+            yield from PrologManager._iterar_lista_prolog(cola)
+        else:
+            yield term
+
+    @staticmethod
+    def _args_de_termino(term):
+        """Devuelve los argumentos de un término compuesto, o [] si no tiene.
+
+        pyswip puede devolver átomos como strings planos (p. ej.
+        'sesion(Prof, Materia, Grupo, Salon, Dia, Hora)'); en ese caso se
+        hace un parseo ligero por comas (los valores no contienen comas).
+        """
+        if isinstance(term, str):
+            m = re.match(r"\w+\((.*)\)\s*$", term.strip())
+            if m:
+                return [a.strip().strip("'") for a in m.group(1).split(",")]
+            return []
+        args = getattr(term, "args", None)
+        if args is None:
+            return []
+        return list(args)
+
+    # --- compatibilidad con la API anterior (legacy) ------------------
+    def obtener_asignaciones_validas(self, max_clases_por_materia_dia: int = MAX_CLASES_POR_MATERIA_DIA) -> List[Dict]:
+        """Devuelve las asignaciones generadas por Prolog (interfaz legacy)."""
+        return self.generar_horario_prolog()

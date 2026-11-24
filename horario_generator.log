@@ -1,62 +1,35 @@
-opo2026-10-31 15:29:23,144 - INFO - ==================================================
-2026-10-31 15:29:23,145 - INFO - INICIANDO GENERACI�N DE HORARIOS
-2026-10-31 15:29:23,146 - INFO - ==================================================
-2026-10-31 15:29:23,147 - INFO - Cargando hechos desde el archivo JSON...
-2026-10-31 15:29:23,149 - INFO - Configuraci�n cargada desde horario_config.json
-2026-10-31 15:29:23,151 - INFO - Cargados 4 profesores
-2026-10-31 15:29:23,152 - INFO - Cargadas 4 disponibilidades
-2026-10-31 15:29:23,152 - INFO - Cargados 4 salones
-2026-10-31 15:29:23,154 - INFO - Cargados 4 grupos
-2026-10-31 15:29:23,155 - INFO - Cargados 4 requerimientos
-2026-10-31 15:29:23,156 - INFO - --- DECLARACI�N DE REGLAS L�GICAS ---
-2026-10-31 15:29:23,162 - ERROR - Error al generar horario: Caused by: 'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\+ clase_registrada(_, _, _, Salon, Dia, Hora))).'. Returned: 'error(syntax_error(operator_expected), string(b'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\\\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\\\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\\\+ clase_registrada(_, _, _, Salon, Dia, Hora))). ', 58))'.
-2026-10-31 15:29:23,162 - ERROR - ERROR EN EL PROCESO: Caused by: 'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\+ clase_registrada(_, _, _, Salon, Dia, Hora))).'. Returned: 'error(syntax_error(operator_expected), string(b'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\\\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\\\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\\\+ clase_registrada(_, _, _, Salon, Dia, Hora))). ', 58))'.
-2026-10-31 15:29:29,993 - INFO - ==================================================
-2026-10-31 15:29:29,994 - INFO - INICIANDO GENERACI�N DE HORARIOS
-2026-10-31 15:29:30,012 - INFO - ==================================================
-2026-10-31 15:29:30,013 - INFO - Cargando hechos desde el archivo JSON...
-2026-10-31 15:29:30,014 - INFO - Configuraci�n cargada desde horario_config.json
-2026-10-31 15:29:30,016 - INFO - Cargados 4 profesores
-2026-10-31 15:29:30,016 - INFO - Cargadas 4 disponibilidades
-2026-10-31 15:29:30,018 - INFO - Cargados 4 salones
-2026-10-31 15:29:30,020 - INFO - Cargados 4 grupos
-2026-10-31 15:29:30,021 - INFO - Cargados 4 requerimientos
-2026-10-31 15:29:30,021 - INFO - --- DECLARACI�N DE REGLAS L�GICAS ---
-2026-10-31 15:29:30,026 - ERROR - Error al generar horario: Caused by: 'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\+ clase_registrada(_, _, _, Salon, Dia, Hora))).'. Returned: 'error(syntax_error(operator_expected), string(b'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\\\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\\\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\\\+ clase_registrada(_, _, _, Salon, Dia, Hora))). ', 58))'.
-2026-10-31 15:29:30,027 - ERROR - ERROR EN EL PROCESO: Caused by: 'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\+ clase_registrada(_, _, _, Salon, Dia, Hora))).'. Returned: 'error(syntax_error(operator_expected), string(b'assertz((sin_empalme(Prof, Grupo, Salon, Dia, Hora) :- \\\\+ clase_registrada(Prof, _, _, _, Dia, Hora), \\\\+ clase_registrada(_, _, Grupo, _, Dia, Hora), \\\\+ clase_registrada(_, _, _, Salon, Dia, Hora))). ', 58))'.
-2026-10-31 15:40:47,250 - INFO - ==================================================
-2026-10-31 15:40:47,250 - INFO - INICIANDO GENERACI�N DE HORARIOS
-2026-10-31 15:40:47,251 - INFO - ==================================================
-2026-10-31 15:40:47,251 - INFO - Cargando hechos desde el archivo JSON...
-2026-10-31 15:40:47,252 - INFO - Configuraci�n cargada desde horario_config.json
-2026-10-31 15:40:47,253 - INFO - Cargados 4 profesores
-2026-10-31 15:40:47,253 - INFO - Cargadas 4 disponibilidades
-2026-10-31 15:40:47,254 - INFO - Cargados 4 salones
-2026-10-31 15:40:47,254 - INFO - Cargados 4 grupos
-2026-10-31 15:40:47,254 - INFO - Cargados 4 requerimientos
-2026-10-31 15:40:47,254 - INFO - --- DECLARACI�N DE REGLAS L�GICAS ---
-2026-10-31 15:40:47,261 - INFO - Reglas compiladas correctamente
-2026-10-31 15:40:47,262 - INFO - Generando horario libre de conflictos...
-2026-10-31 15:40:47,264 - INFO - 4 de 8 candidatas sin empalmes
-2026-10-31 15:40:47,264 - INFO - Horario generado con 4 clases
-2026-10-31 15:40:47,265 - INFO - ==================================================
-2026-10-31 15:40:47,266 - INFO - PROCESO COMPLETADO - Se generaron 4 clases
-2026-10-31 15:40:47,266 - INFO - ==================================================
-2026-10-31 16:41:04,318 - INFO - ==================================================
-2026-10-31 16:41:04,319 - INFO - INICIANDO GENERACI�N DE HORARIOS
-2026-10-31 16:41:04,319 - INFO - ==================================================
-2026-10-31 16:41:04,319 - INFO - Cargando hechos desde el archivo JSON...
-2026-10-31 16:41:04,321 - INFO - Configuraci�n cargada desde horario_config.json
-2026-10-31 16:41:04,322 - INFO - Cargados 4 profesores
-2026-10-31 16:41:04,322 - INFO - Cargadas 4 disponibilidades
-2026-10-31 16:41:04,323 - INFO - Cargados 4 salones
-2026-10-31 16:41:04,323 - INFO - Cargados 4 grupos
-2026-10-31 16:41:04,324 - INFO - Cargados 4 requerimientos
-2026-10-31 16:41:04,324 - INFO - --- DECLARACI�N DE REGLAS L�GICAS ---
-2026-10-31 16:41:04,327 - INFO - Reglas compiladas correctamente
-2026-10-31 16:41:04,327 - INFO - Generando horario libre de conflictos...
-2026-10-31 16:41:04,331 - INFO - 4 de 8 candidatas sin empalmes
-2026-10-31 16:41:04,332 - INFO - Horario generado con 4 clases
-2026-10-31 16:41:04,333 - INFO - ==================================================
-2026-10-31 16:41:04,334 - INFO - PROCESO COMPLETADO - Se generaron 4 clases
-2026-10-31 16:41:04,334 - INFO - ==================================================
+2026-11-16 14:38:36,554 - INFO - ==================================================
+2026-11-16 14:38:36,555 - INFO - INICIANDO GENERACIÓN DE HORARIOS
+2026-11-16 14:38:36,555 - INFO - ==================================================
+2026-11-16 14:38:36,555 - INFO - Cargando hechos desde el archivo JSON...
+2026-11-16 14:38:36,556 - INFO - Configuración cargada desde horario_config.json
+2026-11-16 14:38:36,557 - INFO - Cargados 10 profesores
+2026-11-16 14:38:36,563 - INFO - Cargadas 200 disponibilidades
+2026-11-16 14:38:36,564 - INFO - Cargados 2 salones
+2026-11-16 14:38:36,565 - INFO - Cargados 2 grupos
+2026-11-16 14:38:36,567 - INFO - Cargados 10 requerimientos
+2026-11-16 14:38:36,567 - INFO - --- DECLARACIÓN DE REGLAS LÓGICAS ---
+2026-11-16 14:38:36,571 - INFO - Reglas compiladas correctamente
+2026-11-16 14:38:36,571 - INFO - Generando horario libre de conflictos...
+2026-11-16 14:38:36,664 - INFO - 28 de 200 candidatas sin empalmes
+2026-11-16 14:38:36,664 - INFO - Horario generado con 28 clases
+2026-11-16 14:38:36,672 - INFO - ==================================================
+2026-11-16 14:38:36,672 - INFO - PROCESO COMPLETADO - Se generaron 28 clases
+2026-11-16 14:38:36,673 - INFO - ==================================================
+2026-11-16 15:13:04,134 - INFO - ==================================================
+2026-11-16 15:13:04,135 - INFO - INICIANDO GENERACIÓN DE HORARIOS
+2026-11-16 15:13:04,136 - INFO - ==================================================
+2026-11-16 15:13:04,136 - INFO - Cargando hechos desde el archivo JSON...
+2026-11-16 15:13:04,137 - INFO - Configuración cargada desde horario_config.json
+2026-11-16 15:13:04,138 - INFO - Cargados 10 profesores
+2026-11-16 15:13:04,147 - INFO - Cargadas 200 disponibilidades
+2026-11-16 15:13:04,149 - INFO - Cargados 2 salones
+2026-11-16 15:13:04,150 - INFO - Cargados 2 grupos
+2026-11-16 15:13:04,151 - INFO - Cargados 10 requerimientos
+2026-11-16 15:13:04,151 - INFO - --- DECLARACIÓN DE REGLAS LÓGICAS ---
+2026-11-16 15:13:04,187 - INFO - Reglas compiladas correctamente
+2026-11-16 15:13:04,592 - INFO - Horario generado con 0 clases (búsqueda en Prolog)
+2026-11-16 15:13:04,592 - INFO - Resumen: Se generaron 0 clases para el horario académico.
+2026-11-16 15:13:04,592 - INFO - ==================================================
+2026-11-16 15:13:04,592 - INFO - PROCESO COMPLETADO - Se generaron 0 clases
+2026-11-16 15:13:04,592 - INFO - ==================================================

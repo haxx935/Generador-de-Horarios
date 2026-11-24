@@ -4,10 +4,10 @@ from models import Clase
 
 logger = logging.getLogger(__name__)
 
-class ScheduleOptimizer:
+class SlotDeduplicador:
     @staticmethod
     def optimizar_horario(soluciones: List[Dict]) -> List[Clase]:
-        """Optimizar el horario evitando duplicados de grupos en mismo día/hora"""
+        """Deduplica slots evitando grupos repetidos en mismo día/hora."""
         horario_final: List[Clase] = []
         slot_ocupados: Set[Tuple[str, str, str]] = set()
 
@@ -27,3 +27,8 @@ class ScheduleOptimizer:
                 horario_final.append(clase)
 
         return horario_final
+
+
+# Alias de retrocompatibilidad (ScheduleOptimizer es redundante: sin_empalme/5
+# ya garantiza que un grupo no repita día y hora).
+ScheduleOptimizer = SlotDeduplicador

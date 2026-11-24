@@ -9,6 +9,7 @@
   --color-primary-dark: #1d4ed8;
   --color-success: #16a34a;
   --color-success-dark: #15803d;
+  --color-warning: #d97706;
   --color-danger: #dc2626;
   --color-secondary: #64748b;
   --color-bg: #f8fafc;
@@ -83,7 +84,7 @@ main {
 
 .config-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
 }
 
@@ -130,20 +131,44 @@ main {
 
 .lista-datos li span {
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acciones-lista {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn-eliminar,
+.btn-editar {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.15rem 0.45rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-eliminar {
-  background: transparent;
-  border: none;
   color: var(--color-danger);
-  cursor: pointer;
-  font-size: 0.8rem;
-  padding: 0.2rem;
-  border-radius: 4px;
 }
 
 .btn-eliminar:hover {
   background-color: #fee2e2;
+}
+
+.btn-editar {
+  color: var(--color-warning);
+}
+
+.btn-editar:hover {
+  background-color: #fef3c7;
 }
 
 .form-agregar {
@@ -152,6 +177,13 @@ main {
   gap: 0.5rem;
   border-top: 1px solid var(--color-border);
   padding-top: 0.75rem;
+}
+
+.form-agregar .fields-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .form-agregar input,
@@ -169,7 +201,43 @@ main {
 .form-agregar select:focus {
   outline: none;
   border-color: var(--color-primary);
-  ring: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.time-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  margin-bottom: 0.1rem;
+  display: block;
+}
+
+.form-agregar input[type="time"] {
+  padding: 0.45rem 0.5rem;
+}
+
+.checkboxes-container {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  background-color: #ffffff;
+  max-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  margin: 0;
 }
 
 .form-agregar .btn {
@@ -260,20 +328,177 @@ main {
   color: var(--color-danger);
 }
 
-.resultado {
-  grid-column: 1 / -1;
+.field-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: 0.4rem;
+  margin-bottom: 0.15rem;
 }
 
-.resultado h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+.error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-danger);
+  margin-top: 0.25rem;
+  min-height: 1rem;
+}
+
+.btn-export {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+}
+
+.btn-export:hover:not(:disabled) {
+  background-color: #475569;
+}
+
+/* ================= MODAL EDICIÓN DE GRUPO ================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow: auto;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
   color: var(--color-text);
 }
 
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 0 0.25rem;
+}
+
+.btn-close:hover {
+  color: var(--color-text);
+}
+
+.modal-body {
+  padding: 1rem 1.25rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.acciones-edicion {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================= TABS ================= */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  color: var(--color-primary);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.vista-select {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.vista-select label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.vista-select select {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  min-width: 200px;
+}
+
+/* ================= TABLA HORARIO ================= */
 .tabla-horario {
   overflow-x: auto;
-  margin-bottom: 1rem;
+  margin-top: 0.5rem;
 }
 
 table {
@@ -286,8 +511,8 @@ table {
 }
 
 th, td {
-  text-align: left;
-  padding: 0.85rem 1rem;
+  text-align: center;
+  padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -295,7 +520,7 @@ th {
   background-color: #f1f5f9;
   font-weight: 600;
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   position: sticky;
@@ -304,7 +529,9 @@ th {
 }
 
 td {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  height: 80px;
+  vertical-align: middle;
 }
 
 td.empty {
@@ -317,27 +544,34 @@ tr:last-child td {
 }
 
 .clase {
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.6rem;
   background-color: #dbeafe;
   border: 1px solid #bfdbfe;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #1e40af;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  height: 100%;
+  justify-content: center;
 }
 
 .clase strong {
   display: block;
-  font-size: 0.9rem;
-  margin-bottom: 0.15rem;
+  font-size: 0.85rem;
 }
 
 .clase small {
   font-weight: 400;
   opacity: 0.85;
+  font-size: 0.75rem;
 }
 
+/* ================= RESUMEN ================= */
 .resumen {
+  margin-top: 1rem;
   padding: 0.85rem 1rem;
   background-color: #f0fdf4;
   border: 1px solid #bbf7d0;
@@ -355,6 +589,7 @@ footer {
   font-size: 0.875rem;
 }
 
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
   main {
     padding: 1rem;
@@ -373,8 +608,12 @@ footer {
   }
 
   th, td {
-    padding: 0.6rem 0.5rem;
-    font-size: 0.8rem;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  td {
+    height: 60px;
   }
 
   .btn {
@@ -388,6 +627,29 @@ footer {
 
   .acciones-group .btn {
     width: 100%;
+  }
+
+  .tabs {
+    flex-direction: column;
+    gap: 0.25rem;
+    border-bottom: none;
+  }
+
+  .tab-btn {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    border-bottom: none;
+  }
+
+  .tab-btn.active {
+    background-color: #eff6ff;
+    border-color: var(--color-primary);
+  }
+
+  .acciones-lista {
+    flex-direction: column;
+    gap: 0.2rem;
+    align-items: flex-end;
   }
 }
 

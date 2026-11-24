@@ -1,12 +1,17 @@
-from dataclasses import dataclass
 from typing import List, Dict
+
+from prolog_manager import atom
+
+
 class Profesor:
     def __init__(self, nombre: str, materia: str):
         self.nombre = nombre
         self.materia = materia
 
     def to_prolog_fact(self) -> str:
-        return f"profesor({self.nombre}, {self.materia})"
+        return f"profesor({atom(self.nombre)}, {atom(self.materia)})"
+
+
 class Disponibilidad:
     def __init__(self, profesor: str, dia: str, hora: str):
         self.profesor = profesor
@@ -14,15 +19,26 @@ class Disponibilidad:
         self.hora = hora
 
     def to_prolog_fact(self) -> str:
-        return f"disponible({self.profesor}, {self.dia}, {self.hora})"
+        return f"disponible({atom(self.profesor)}, {atom(self.dia)}, {atom(self.hora)})"
+
+
 class Salon:
-    def __init__(self, nombre: str, capacidad: int, equipo: str):
+    def __init__(self, nombre: str, capacidad: int, equipo: str, materias_util=None):
         self.nombre = nombre
         self.capacidad = capacidad
         self.equipo = equipo
+        self.materias_util = materias_util or []
 
     def to_prolog_fact(self) -> str:
-        return f"salon({self.nombre}, {self.capacidad}, {self.equipo})"
+        return f"salon({atom(self.nombre)}, {self.capacidad}, {atom(self.equipo)})"
+
+    def to_prolog_materia_util(self) -> List[str]:
+        return [
+            f"materia_util({atom(self.nombre)}, {atom(m)})"
+            for m in self.materias_util
+        ]
+
+
 class Grupo:
     def __init__(self, nombre: str, alumnos: int, materia: str):
         self.nombre = nombre
@@ -31,16 +47,18 @@ class Grupo:
 
     def to_prolog_hechos(self) -> List[str]:
         return [
-            f"grupo({self.nombre}, {self.alumnos})",
-            f"grupo_materia({self.nombre}, {self.materia})"
+            f"grupo({atom(self.nombre)}, {self.alumnos})",
+            f"grupo_materia({atom(self.nombre)}, {atom(self.materia)})"
         ]
+
+
 class Requerimiento:
     def __init__(self, materia: str, equipo: str):
         self.materia = materia
         self.equipo = equipo
 
     def to_prolog_fact(self) -> str:
-        return f"requiere({self.materia}, {self.equipo})"
+        return f"requiere({atom(self.materia)}, {atom(self.equipo)})"
 class Clase:
     def __init__(self, profesor: str, materia: str, grupo: str, salon: str, dia: str, hora: str):
         self.profesor = profesor

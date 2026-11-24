@@ -1,32 +1,1166 @@
 {
   "profesores": [
-    {"nombre": "ana", "materia": "fisica"},
-    {"nombre": "carlos", "materia": "programacion"},
-    {"nombre": "sofia", "materia": "matematicas"},
-    {"nombre": "miguel", "materia": "bases_de_datos"}
+    {
+      "nombre": "prof_matematicas",
+      "materia": "matematicas"
+    },
+    {
+      "nombre": "prof_fisica",
+      "materia": "fisica"
+    },
+    {
+      "nombre": "prof_quimica",
+      "materia": "quimica"
+    },
+    {
+      "nombre": "prof_programacion",
+      "materia": "programacion"
+    },
+    {
+      "nombre": "prof_redes",
+      "materia": "redes"
+    },
+    {
+      "nombre": "prof_historia",
+      "materia": "historia"
+    },
+    {
+      "nombre": "prof_ingles",
+      "materia": "ingles"
+    },
+    {
+      "nombre": "prof_biologia",
+      "materia": "biologia"
+    },
+    {
+      "nombre": "prof_literatura",
+      "materia": "literatura"
+    },
+    {
+      "nombre": "prof_filosofia",
+      "materia": "filosofia"
+    }
   ],
   "disponibilidades": [
-    {"profesor": "ana", "dia": "lunes", "hora": "h_8_10"},
-    {"profesor": "carlos", "dia": "lunes", "hora": "h_8_10"},
-    {"profesor": "sofia", "dia": "martes", "hora": "h_10_12"},
-    {"profesor": "miguel", "dia": "miercoles", "hora": "h_12_14"}
+    {
+      "profesor": "prof_matematicas",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_matematicas",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_fisica",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_quimica",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_programacion",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_redes",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_historia",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_ingles",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_biologia",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_literatura",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "lunes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "lunes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "lunes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "lunes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "martes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "martes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "martes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "martes",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "miercoles",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "miercoles",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "miercoles",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "miercoles",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "jueves",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "jueves",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "jueves",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "jueves",
+      "hora": "h_14_16"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "viernes",
+      "hora": "h_8_10"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "viernes",
+      "hora": "h_10_12"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "viernes",
+      "hora": "h_12_14"
+    },
+    {
+      "profesor": "prof_filosofia",
+      "dia": "viernes",
+      "hora": "h_14_16"
+    }
   ],
   "salones": [
-    {"nombre": "lab_1", "capacidad": 20, "equipo": "computadoras"},
-    {"nombre": "aula_101", "capacidad": 40, "equipo": "proyector"},
-    {"nombre": "aula_102", "capacidad": 35, "equipo": "proyector"},
-    {"nombre": "lab_2", "capacidad": 25, "equipo": "computadoras"}
+    {
+      "nombre": "aula_101",
+      "capacidad": 30,
+      "equipo": "proyector",
+      "materias_util": [
+        "matematicas",
+        "fisica",
+        "quimica",
+        "historia",
+        "ingles",
+        "biologia",
+        "literatura",
+        "filosofia"
+      ]
+    },
+    {
+      "nombre": "lab_201",
+      "capacidad": 20,
+      "equipo": "computadoras",
+      "materias_util": [
+        "programacion",
+        "redes"
+      ]
+    }
   ],
   "grupos": [
-    {"nombre": "grupo_a", "alumnos": 25, "materia": "fisica"},
-    {"nombre": "grupo_b", "alumnos": 15, "materia": "programacion"},
-    {"nombre": "grupo_c", "alumnos": 30, "materia": "matematicas"},
-    {"nombre": "grupo_d", "alumnos": 20, "materia": "bases_de_datos"}
+    {
+      "nombre": "grupo_a",
+      "alumnos": 20,
+      "materia": "matematicas"
+    },
+    {
+      "nombre": "grupo_a",
+      "alumnos": 20,
+      "materia": "fisica"
+    },
+    {
+      "nombre": "grupo_a",
+      "alumnos": 20,
+      "materia": "quimica"
+    },
+    {
+      "nombre": "grupo_a",
+      "alumnos": 20,
+      "materia": "historia"
+    },
+    {
+      "nombre": "grupo_a",
+      "alumnos": 20,
+      "materia": "ingles"
+    },
+    {
+      "nombre": "grupo_b",
+      "alumnos": 20,
+      "materia": "programacion"
+    },
+    {
+      "nombre": "grupo_b",
+      "alumnos": 20,
+      "materia": "redes"
+    },
+    {
+      "nombre": "grupo_b",
+      "alumnos": 20,
+      "materia": "biologia"
+    },
+    {
+      "nombre": "grupo_b",
+      "alumnos": 20,
+      "materia": "literatura"
+    },
+    {
+      "nombre": "grupo_b",
+      "alumnos": 20,
+      "materia": "filosofia"
+    }
   ],
   "requerimientos": [
-    {"materia": "fisica", "equipo": "proyector"},
-    {"materia": "programacion", "equipo": "computadoras"},
-    {"materia": "matematicas", "equipo": "proyector"},
-    {"materia": "bases_de_datos", "equipo": "computadoras"}
+    {
+      "materia": "matematicas",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "fisica",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "quimica",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "programacion",
+      "equipo": "computadoras"
+    },
+    {
+      "materia": "redes",
+      "equipo": "computadoras"
+    },
+    {
+      "materia": "historia",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "ingles",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "biologia",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "literatura",
+      "equipo": "proyector"
+    },
+    {
+      "materia": "filosofia",
+      "equipo": "proyector"
+    }
   ]
 }

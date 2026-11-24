@@ -9,7 +9,7 @@ def configurar_logging():
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler('horario_generator.log'),
+            logging.FileHandler('horario_generator.log', encoding='utf-8'),
             logging.StreamHandler()
         ]
     )

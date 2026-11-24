@@ -1,310 +1,370 @@
 const API_BASE = "http://127.0.0.1:5000";
 
 const DIAS = ["lunes", "martes", "miercoles", "jueves", "viernes"];
-const HORAS = ["h_8_10", "h_10_12", "h_12_14", "h_14_16", "h_16_18"];
+const BLOQUES = [
+  { etiqueta: "07-08", ini: 7, fin: 8 },
+  { etiqueta: "08-09", ini: 8, fin: 9 },
+  { etiqueta: "09-10", ini: 9, fin: 10 },
+  { etiqueta: "10-11", ini: 10, fin: 11 },
+  { etiqueta: "11-12", ini: 11, fin: 12 },
+  { etiqueta: "12-13", ini: 12, fin: 13 },
+  { etiqueta: "13-14", ini: 13, fin: 14 },
+  { etiqueta: "14-15", ini: 14, fin: 15 },
+  { etiqueta: "15-16", ini: 15, fin: 16 },
+  { etiqueta: "16-17", ini: 16, fin: 17 },
+  { etiqueta: "17-18", ini: 17, fin: 18 },
+];
 
-// Referencias DOM
-const btnGenerar = document.getElementById("btn-generar");
-const btnLimpiar = document.getElementById("btn-limpiar");
-const panelResultado = document.getElementById("panel-resultado");
-const contenedorHorario = document.getElementById("contenedor-horario");
-const resumenEl = document.getElementById("resumen");
-const estadoEl = document.getElementById("estado");
+let datosConfig = { maestros: [], grupos: [], aulas: [] };
+let horarioGenerado = [];
+let grupoEditandoIdx = null;
+let fetchController = null;
 
-// Estado en memoria (editable por el usuario)
-let datosConfig = {
-  profesores: [
-    { nombre: "ana", materia: "fisica" },
-    { nombre: "carlos", materia: "programacion" },
-    { nombre: "sofia", materia: "matematicas" },
-    { nombre: "miguel", materia: "bases_de_datos" },
-  ],
-  grupos: [
-    { nombre: "grupo_a", alumnos: 25, materia: "fisica" },
-    { nombre: "grupo_b", alumnos: 15, materia: "programacion" },
-    { nombre: "grupo_c", alumnos: 30, materia: "matematicas" },
-    { nombre: "grupo_d", alumnos: 20, materia: "bases_de_datos" },
-  ],
-  salones: [
-    { nombre: "lab_1", capacidad: 20, equipo: "computadoras" },
-    { nombre: "aula_101", capacidad: 40, equipo: "proyector" },
-    { nombre: "aula_102", capacidad: 35, equipo: "proyector" },
-    { nombre: "lab_2", capacidad: 25, equipo: "computadoras" },
-  ],
-  disponibilidades: [
-    { profesor: "ana", dia: "lunes", hora: "h_8_10" },
-    { profesor: "carlos", dia: "lunes", hora: "h_8_10" },
-    { profesor: "sofia", dia: "martes", hora: "h_10_12" },
-    { profesor: "miguel", dia: "miercoles", hora: "h_12_14" },
-  ],
+// ---------- Datos por defecto ----------
+function cargarDatosPorDefecto() {
+  datosConfig.maestros = [
+    { nombre: "Prof. Matemáticas", materias: ["Matemáticas"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Matemáticas": "proyector" } },
+    { nombre: "Prof. Física", materias: ["Física"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Física": "proyector" } },
+    { nombre: "Prof. Química", materias: ["Química"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Química": "proyector" } },
+    { nombre: "Prof. Programación", materias: ["Programación"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Programación": "computadoras" } },
+    { nombre: "Prof. Redes", materias: ["Redes"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Redes": "computadoras" } },
+    { nombre: "Prof. Historia", materias: ["Historia"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Historia": "proyector" } },
+    { nombre: "Prof. Inglés", materias: ["Inglés"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Inglés": "proyector" } },
+    { nombre: "Prof. Biología", materias: ["Biología"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Biología": "proyector" } },
+    { nombre: "Prof. Literatura", materias: ["Literatura"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Literatura": "proyector" } },
+    { nombre: "Prof. Filosofía", materias: ["Filosofía"], disponibilidad: { entrada: "08:00", salida: "16:00" }, equipo_requerido: { "Filosofía": "proyector" } },
+  ];
+
+  datosConfig.grupos = [
+    { nombre: "Grupo A", materias: ["Matemáticas", "Física", "Química", "Historia", "Inglés"], equipo_requerido: { "Matemáticas": "proyector", "Física": "proyector", "Química": "proyector", "Historia": "proyector", "Inglés": "proyector" } },
+    { nombre: "Grupo B", materias: ["Programación", "Redes", "Biología", "Literatura", "Filosofía"], equipo_requerido: { "Programación": "computadoras", "Redes": "computadoras", "Biología": "proyector", "Literatura": "proyector", "Filosofía": "proyector" } },
+  ];
+
+  datosConfig.aulas = [
+    { nombre: "Aula 101", tipo: "salón", capacidad: 30, equipo: "proyector", materias_util: ["Matemáticas", "Física", "Química", "Historia", "Inglés", "Biología", "Literatura", "Filosofía"] },
+    { nombre: "Lab 201", tipo: "laboratorio de computo", capacidad: 20, equipo: "computadoras", materias_util: ["Programación", "Redes"] },
+  ];
+}
+
+// ---------- Utilidades ----------
+const EQUIPO_POR_MATERIA_DEFECTO = {
+  programación: "computadoras",
+  programacion: "computadoras",
+  redes: "computadoras",
+  contabilidad: "computadoras",
 };
+function equipoPorDefecto(materia) { return EQUIPO_POR_MATERIA_DEFECTO[materia.toLowerCase()] || "proyector"; }
+function capitalize(t) { if (!t) return ""; return t.charAt(0).toUpperCase() + t.slice(1); }
+function formatoDia(d) {
+  const m = { lunes: "Lunes", martes: "Martes", miercoles: "Miércoles", jueves: "Jueves", viernes: "Viernes" };
+  return m[d] || capitalize(d);
+}
 
-// ---------------------------------------------------------------------------
-// Renderizado de listas
-// ---------------------------------------------------------------------------
-
+// ---------- Render listas ----------
 function renderListas() {
-  const render = (id, items, plantilla, onEliminar) => {
+  const render = (id, items, plantilla, onDel, onEdit) => {
     const el = document.getElementById(id);
-    el.innerHTML = items.map((item, idx) => {
-      return `<li>
-        <span>${plantilla(item)}</span>
-        <button type="button" class="btn-eliminar" data-idx="${idx}" title="Eliminar">&times;</button>
-      </li>`;
+    el.innerHTML = items.map((it, i) => {
+      const editarBtn = onEdit ? `<button class="btn-editar" data-i="${i}" title="Editar">✎</button>` : "";
+      return `<li><span>${plantilla(it)}</span><div class="acciones-lista">${editarBtn}<button class="btn-eliminar" data-i="${i}" title="Eliminar">&times;</button></div></li>`;
     }).join("");
-
-    // Delegaci�n de eventos para eliminar
-    el.querySelectorAll(".btn-eliminar").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const i = parseInt(btn.dataset.idx, 10);
-        onEliminar(i);
-      });
-    });
+    el.querySelectorAll(".btn-eliminar").forEach(b => b.addEventListener("click", () => { onDel(parseInt(b.dataset.i, 10)); }));
+    if (onEdit) {
+      el.querySelectorAll(".btn-editar").forEach(b => b.addEventListener("click", () => { onEdit(parseInt(b.dataset.i, 10)); }));
+    }
   };
 
-  render(
-    "lista-profesores",
-    datosConfig.profesores,
-    (p) => `<strong>${capitalize(p.nombre)}</strong> - ${p.materia}`,
-    (i) => { datosConfig.profesores.splice(i, 1); renderListas(); }
+  render("lista-maestros", datosConfig.maestros,
+    m => `<strong>${capitalize(m.nombre)}</strong> - ${(m.materias||[]).join(", ")} (${m.disponibilidad.entrada} a ${m.disponibilidad.salida})`,
+    i => { datosConfig.maestros.splice(i,1); actualizarChecks(); renderListas(); });
+
+  render("lista-grupos", datosConfig.grupos,
+    g => `<strong>${g.nombre}</strong> - ${(g.materias||[]).join(", ")}`,
+    i => { datosConfig.grupos.splice(i,1); renderListas(); },
+    i => { abrirEdicionGrupo(i); }
   );
 
-  render(
-    "lista-grupos",
-    datosConfig.grupos,
-    (g) => `<strong>${g.nombre}</strong> (${g.alumnos} alumnos) - ${g.materia}`,
-    (i) => { datosConfig.grupos.splice(i, 1); renderListas(); }
-  );
+  render("lista-aulas", datosConfig.aulas,
+    a => `<strong>${a.nombre}</strong> (${a.tipo}) - ${(a.materias_util||[]).join(", ")}`,
+    i => { datosConfig.aulas.splice(i,1); renderListas(); });
 
-  render(
-    "lista-salones",
-    datosConfig.salones,
-    (s) => `<strong>${s.nombre}</strong> cap. ${s.capacidad} - ${s.equipo}`,
-    (i) => { datosConfig.salones.splice(i, 1); renderListas(); }
-  );
-
-  render(
-    "lista-disponibilidades",
-    datosConfig.disponibilidades,
-    (d) => `<strong>${capitalize(d.profesor)}</strong> - ${formatoDia(d.dia)} ${formatoHora(d.hora)}`,
-    (i) => { datosConfig.disponibilidades.splice(i, 1); renderListas(); }
-  );
+  document.getElementById("select-maestro").innerHTML = '<option value="">-- Maestro --</option>' + datosConfig.maestros.map(m => `<option value="${m.nombre}">${capitalize(m.nombre)}</option>`).join("");
+  document.getElementById("select-grupo").innerHTML = '<option value="">-- Grupo --</option>' + datosConfig.grupos.map(g => `<option value="${g.nombre}">${g.nombre}</option>`).join("");
 }
 
-// ---------------------------------------------------------------------------
-// Manejo de formularios de agregar
-// ---------------------------------------------------------------------------
-
-function setupFormularios() {
-  // Profesor
-  document.getElementById("btn-agregar-profesor").addEventListener("click", () => {
-    const nombre = document.getElementById("input-prof-nombre").value.trim();
-    const materia = document.getElementById("input-prof-materia").value.trim();
-    if (!nombre || !materia) return;
-    datosConfig.profesores.push({ nombre, materia });
-    document.getElementById("input-prof-nombre").value = "";
-    document.getElementById("input-prof-materia").value = "";
-    renderListas();
-  });
-
-  // Grupo
-  document.getElementById("btn-agregar-grupo").addEventListener("click", () => {
-    const nombre = document.getElementById("input-grupo-nombre").value.trim();
-    const alumnos = parseInt(document.getElementById("input-grupo-alumnos").value, 10);
-    const materia = document.getElementById("input-grupo-materia").value.trim();
-    if (!nombre || !alumnos || !materia) return;
-    datosConfig.grupos.push({ nombre, alumnos, materia });
-    document.getElementById("input-grupo-nombre").value = "";
-    document.getElementById("input-grupo-alumnos").value = "";
-    document.getElementById("input-grupo-materia").value = "";
-    renderListas();
-  });
-
-  // Salon
-  document.getElementById("btn-agregar-salon").addEventListener("click", () => {
-    const nombre = document.getElementById("input-salon-nombre").value.trim();
-    const capacidad = parseInt(document.getElementById("input-salon-capacidad").value, 10);
-    const equipo = document.getElementById("input-salon-equipo").value.trim();
-    if (!nombre || !capacidad || !equipo) return;
-    datosConfig.salones.push({ nombre, capacidad, equipo });
-    document.getElementById("input-salon-nombre").value = "";
-    document.getElementById("input-salon-capacidad").value = "";
-    document.getElementById("input-salon-equipo").value = "";
-    renderListas();
-  });
-
-  // Disponibilidad
-  document.getElementById("btn-agregar-disp").addEventListener("click", () => {
-    const profesor = document.getElementById("input-disp-profesor").value.trim();
-    const dia = document.getElementById("input-disp-dia").value;
-    const hora = document.getElementById("input-disp-hora").value;
-    if (!profesor) return;
-    datosConfig.disponibilidades.push({ profesor, dia, hora });
-    document.getElementById("input-disp-profesor").value = "";
-    renderListas();
-  });
+function actualizarChecks() {
+  const materias = Array.from(new Set(datosConfig.maestros.flatMap(m => m.materias||[])));
+  const chk = (mat, c) => `<label class="checkbox-item"><input type="checkbox" value="${mat}" ${c?"checked":""}> ${capitalize(mat)}</label>`;
+  document.getElementById("checkboxes-materias-grupo").innerHTML = materias.map(m => chk(m, false)).join("");
+  document.getElementById("checkboxes-materias-aula").innerHTML = materias.map(m => chk(m, false)).join("");
 }
 
-// ---------------------------------------------------------------------------
-// Generaci�n de horario
-// ---------------------------------------------------------------------------
+// ---------- Edición de grupo ----------
+function abrirEdicionGrupo(idx) {
+  const grupo = datosConfig.grupos[idx];
+  grupoEditandoIdx = idx;
+  const modal = document.getElementById("modal-edicion-grupo");
+  const cont = document.getElementById("checkboxes-edicion-grupo");
+  const titulo = document.getElementById("titulo-edicion-grupo");
+  const materias = Array.from(new Set(datosConfig.maestros.flatMap(m => m.materias||[])));
 
+  titulo.textContent = `Editar materias de ${grupo.nombre}`;
+  cont.innerHTML = materias.map(m => {
+    const esta = (grupo.materias||[]).includes(m);
+    return `<label class="checkbox-item"><input type="checkbox" value="${m}" ${esta?"checked":""}> ${capitalize(m)}</label>`;
+  }).join("");
+
+  modal.classList.add("visible");
+  modal.hidden = false;
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function cerrarEdicionGrupo() {
+  const modal = document.getElementById("modal-edicion-grupo");
+  modal.classList.remove("visible");
+  modal.hidden = true;
+  modal.setAttribute("aria-hidden", "true");
+  grupoEditandoIdx = null;
+}
+
+function guardarEdicionGrupo() {
+  if (grupoEditandoIdx === null) return;
+  const checks = document.querySelectorAll("#checkboxes-edicion-grupo input:checked");
+  const nuevasMaterias = Array.from(checks).map(c => c.value);
+  if (nuevasMaterias.length === 0) {
+    alert("Selecciona al menos una materia.");
+    return;
+  }
+  datosConfig.grupos[grupoEditandoIdx].materias = nuevasMaterias;
+  const equipoPrevio = datosConfig.grupos[grupoEditandoIdx].equipo_requerido || {};
+  const nuevoEquipo = {};
+  nuevasMaterias.forEach(m => {
+    const prev = equipoPrevio[m];
+    nuevoEquipo[m] = (typeof prev === "string" && prev.trim()) ? prev.trim() : equipoPorDefecto(m);
+  });
+  datosConfig.grupos[grupoEditandoIdx].equipo_requerido = nuevoEquipo;
+  cerrarEdicionGrupo();
+  renderListas();
+  actualizarChecks();
+}
+
+// ---------- Formularios ----------
+function setupForms() {
+  document.getElementById("btn-agregar-maestro").onclick = () => {
+    const form = document.getElementById("input-m-nombre");
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const n = document.getElementById("input-m-nombre").value.trim();
+    const mat = document.getElementById("input-m-materias").value.trim();
+    const e = document.getElementById("input-m-entrada").value;
+    const s = document.getElementById("input-m-salida").value;
+    if (!n || !mat || !e || !s) {
+      document.getElementById("error-maestro").textContent = "Completa todos los campos.";
+      return;
+    }
+    document.getElementById("error-maestro").textContent = "";
+    datosConfig.maestros.push({ nombre: n, materias: mat.split(",").map(x=>x.trim()).filter(Boolean), disponibilidad: { entrada: e, salida: s } });
+    document.getElementById("input-m-nombre").value = "";
+    document.getElementById("input-m-materias").value = "";
+    document.getElementById("input-m-entrada").value = "";
+    document.getElementById("input-m-salida").value = "";
+    actualizarChecks(); renderListas();
+  };
+  document.getElementById("btn-agregar-grupo").onclick = () => {
+    const n = document.getElementById("input-g-nombre").value.trim();
+    const mats = Array.from(document.querySelectorAll("#checkboxes-materias-grupo input:checked")).map(c=>c.value);
+    if (!n) {
+      document.getElementById("error-grupo").textContent = "Ingresa un nombre.";
+      return;
+    }
+    if (mats.length === 0) {
+      document.getElementById("error-grupo").textContent = "Selecciona al menos una materia.";
+      return;
+    }
+    document.getElementById("error-grupo").textContent = "";
+    datosConfig.grupos.push({ nombre: n, materias: mats });
+    document.getElementById("input-g-nombre").value = "";
+    document.querySelectorAll("#checkboxes-materias-grupo input").forEach(c=>c.checked=false);
+    renderListas();
+  };
+  document.getElementById("btn-agregar-aula").onclick = () => {
+    const n = document.getElementById("input-a-nombre").value.trim();
+    const t = document.getElementById("input-a-tipo").value;
+    const mats = Array.from(document.querySelectorAll("#checkboxes-materias-aula input:checked")).map(c=>c.value);
+    if (!n) {
+      document.getElementById("error-aula").textContent = "Ingresa un nombre.";
+      return;
+    }
+    if (!t) {
+      document.getElementById("error-aula").textContent = "Selecciona un tipo.";
+      return;
+    }
+    if (mats.length === 0) {
+      document.getElementById("error-aula").textContent = "Selecciona al menos una materia útil.";
+      return;
+    }
+    document.getElementById("error-aula").textContent = "";
+    datosConfig.aulas.push({ nombre: n, tipo: t, materias_util: mats });
+    document.getElementById("input-a-nombre").value = "";
+    document.getElementById("input-a-tipo").value = "";
+    document.querySelectorAll("#checkboxes-materias-aula input").forEach(c=>c.checked=false);
+    renderListas();
+  };
+
+  document.getElementById("btn-cerrar-edicion-grupo").onclick = cerrarEdicionGrupo;
+  document.getElementById("btn-cancelar-edicion-grupo").onclick = cerrarEdicionGrupo;
+  document.getElementById("btn-guardar-edicion-grupo").onclick = guardarEdicionGrupo;
+
+  document.getElementById("modal-edicion-grupo").onclick = (e) => {
+    if (e.target.id === "modal-edicion-grupo") cerrarEdicionGrupo();
+  };
+
+  document.getElementById("btn-exportar-csv").onclick = exportarCSV;
+}
+
+// ---------- Generar ----------
 async function generarHorario() {
-  btnGenerar.disabled = true;
-  btnGenerar.textContent = "Generando...";
-  estadoEl.textContent = "Enviando configuraci�n al backend...";
-  estadoEl.className = "estado cargando";
+  if (fetchController) fetchController.abort();
+  fetchController = new AbortController();
+  const senal = fetchController.signal;
 
+  const btn = document.getElementById("btn-generar");
+  btn.disabled = true; btn.textContent = "Generando...";
+  const estado = document.getElementById("estado");
+  estado.textContent = "Consultando backend..."; estado.className = "estado cargando";
   try {
-    const respuesta = await fetch(`${API_BASE}/generar-horario`, {
+    const r = await fetch(`${API_BASE}/generar-horario`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(datosConfig),
+      signal: senal
     });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    horarioGenerado = data.asignaciones || [];
+    console.log("Horario:", horarioGenerado);
+    if (horarioGenerado.length === 0) throw new Error("No se generaron asignaciones.");
+    document.getElementById("resumen").textContent = `Se generaron ${horarioGenerado.length} clases.`;
+    document.getElementById("panel-resultado").hidden = false;
+    estado.textContent = "Horario generado."; estado.className = "estado exito";
+    document.getElementById("btn-exportar-csv").disabled = false;
 
-    if (!respuesta.ok) {
-      const errData = await respuesta.json().catch(() => ({}));
-      throw new Error(errData.error || `Error ${respuesta.status}`);
+    setupTabs();
+
+    if (datosConfig.maestros.length > 0) {
+      document.getElementById("select-maestro").value = datosConfig.maestros[0].nombre;
+      renderVistaMaestro(datosConfig.maestros[0].nombre);
     }
-
-    const data = await respuesta.json();
-    const horario = data.horario || [];
-
-    if (!horario || horario.length === 0) {
-      throw new Error("No se pudo generar un horario v\u00e1lido con las restricciones actuales.");
+    if (datosConfig.grupos.length > 0) {
+      document.getElementById("select-grupo").value = datosConfig.grupos[0].nombre;
+      renderReticulaGrupo(datosConfig.grupos[0].nombre);
     }
-
-    resumenEl.textContent = `Se generaron ${horario.length} clases para el horario acad�mico.`;
-    renderizarTabla(horario);
-    panelResultado.hidden = false;
-    estadoEl.textContent = "Horario generado correctamente.";
-    estadoEl.className = "estado exito";
-    panelResultado.scrollIntoView({ behavior: "smooth", block: "start" });
-  } catch (error) {
-    estadoEl.textContent = error.message;
-    estadoEl.className = "estado error";
-    console.error(error);
+    document.getElementById("panel-resultado").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (err) {
+    if (err.name === "AbortError") return;
+    estado.textContent = err.message; estado.className = "estado error";
+    console.error(err);
   } finally {
-    btnGenerar.disabled = false;
-    btnGenerar.textContent = "Generar Horario";
+    btn.disabled = false; btn.textContent = "Generar Horario";
+    fetchController = null;
   }
 }
 
-// ---------------------------------------------------------------------------
-// Renderizado de tabla
-// ---------------------------------------------------------------------------
-
-function renderizarTabla(horario) {
-  const matriz = {};
-  DIAS.forEach((dia) => {
-    matriz[dia] = {};
-    HORAS.forEach((hora) => {
-      matriz[dia][hora] = null;
+function setupTabs() {
+  document.querySelectorAll(".tab-btn").forEach(b => b.replaceWith(b.cloneNode(true)));
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
     });
   });
+  document.getElementById("select-maestro").onchange = () => renderVistaMaestro(document.getElementById("select-maestro").value);
+  document.getElementById("select-grupo").onchange = () => renderReticulaGrupo(document.getElementById("select-grupo").value);
+}
 
-  horario.forEach((clase) => {
-    const dia = clase.Dia || clase.dia;
-    const hora = clase.Hora || clase.hora;
-    if (matriz[dia] && matriz[dia][hora] === null) {
-      matriz[dia][hora] = clase;
-    }
-  });
+// ---------- Vistas ----------
+function renderVistaMaestro(nombre) {
+  const cont = document.getElementById("contenedor-tabla-maestro");
+  cont.innerHTML = "";
+  if (!nombre) { cont.innerHTML = '<p style="color:var(--color-text-muted)">Selecciona un maestro.</p>'; return; }
+  const clases = horarioGenerado.filter(c => c.maestro === nombre);
+  if (clases.length === 0) { cont.innerHTML = `<p style="color:var(--color-text-muted)">${capitalize(nombre)} no tiene clases.</p>`; return; }
+  let html = `<table><thead><tr><th>Grupo</th><th>Materia</th><th>Aula</th><th>Día</th><th>Hora</th></tr></thead><tbody>`;
+  clases.forEach(c => html += `<tr><td>${c.grupo}</td><td>${capitalize(c.materia)}</td><td>${c.aula}</td><td>${formatoDia(c.dia)}</td><td>${c.bloque || c.hora_inicio}</td></tr>`);
+  html += "</tbody></table>";
+  cont.innerHTML = html;
+}
 
-  let html = `<table>
-    <thead>
-      <tr>
-        <th>D\u00eda \\ Hora</th>
-        ${HORAS.map((h) => `<th>${formatoHora(h)}</th>`).join("")}
-      </tr>
-    </thead>
-    <tbody>
-  `;
-
-  DIAS.forEach((dia) => {
-    html += `<tr><th>${formatoDia(dia)}</th>`;
-    HORAS.forEach((hora) => {
-      const clase = matriz[dia][hora];
-      if (clase) {
-        const prof = clase.Prof || clase.profesor;
-        const mat = clase.Materia || clase.materia;
-        const grupo = clase.Grupo || clase.grupo;
-        const salon = clase.Salon || clase.salon;
-        html += `
-          <td>
-            <div class="clase">
-              <strong>${capitalize(mat)}</strong>
-              <small>${capitalize(prof)} &bull; ${grupo.replace(/_/g, " ").toUpperCase()}</small>
-              <small>${salon.replace(/_/g, " ").toUpperCase()}</small>
-            </div>
-          </td>
-        `;
-      } else {
-        html += `<td class="empty">-</td>`;
-      }
+function renderReticulaGrupo(nombre) {
+  const cont = document.getElementById("contenedor-reticula-grupo");
+  cont.innerHTML = "";
+  if (!nombre) { cont.innerHTML = '<p style="color:var(--color-text-muted)">Selecciona un grupo.</p>'; return; }
+  const clases = horarioGenerado.filter(c => c.grupo === nombre);
+  if (clases.length === 0) { cont.innerHTML = `<p style="color:var(--color-text-muted)">${nombre} no tiene clases.</p>`; return; }
+  const matriz = {};
+  DIAS.forEach(d => { matriz[d] = {}; BLOQUES.forEach(b => matriz[d][b.etiqueta] = null); });
+  clases.forEach(c => { const bl = c.bloque || c.hora_inicio; if (matriz[c.dia] && matriz[c.dia][bl] === null) matriz[c.dia][bl] = c; });
+  let html = `<table><thead><tr><th>Hora \\ Día</th>${DIAS.map(d => `<th>${formatoDia(d)}</th>`).join("")}</tr></thead><tbody>`;
+  BLOQUES.forEach(b => {
+    html += `<tr><th>${b.etiqueta}</th>`;
+    DIAS.forEach(d => {
+      const c = matriz[d][b.etiqueta];
+      if (c) html += `<td><div class="clase"><strong>${capitalize(c.materia)}</strong><small>${capitalize(c.maestro)}</small><small>${c.aula}</small></div></td>`;
+      else html += `<td class="empty">-</td>`;
     });
     html += `</tr>`;
   });
-
-  html += `</tbody></table>`;
-  contenedorHorario.innerHTML = html;
+  html += "</tbody></table>";
+  cont.innerHTML = html;
 }
 
-// ---------------------------------------------------------------------------
-// Utilidades
-// ---------------------------------------------------------------------------
-
-function formatoDia(dia) {
-  const map = {
-    lunes: "Lunes",
-    martes: "Martes",
-    miercoles: "Mi\u00e9rcoles",
-    jueves: "Jueves",
-    viernes: "Viernes",
-  };
-  return map[dia] || capitalize(dia);
-}
-
-function formatoHora(hora) {
-  const map = {
-    h_8_10: "08:00 - 10:00",
-    h_10_12: "10:00 - 12:00",
-    h_12_14: "12:00 - 14:00",
-    h_14_16: "14:00 - 16:00",
-    h_16_18: "16:00 - 18:00",
-  };
-  return map[hora] || hora;
-}
-
-function capitalize(texto) {
-  if (!texto) return "";
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
-}
-
-// ---------------------------------------------------------------------------
-// Eventos globales
-// ---------------------------------------------------------------------------
-
-btnGenerar.addEventListener("click", generarHorario);
-
-btnLimpiar.addEventListener("click", () => {
-  datosConfig = {
-    profesores: [],
-    grupos: [],
-    salones: [],
-    disponibilidades: [],
-  };
+function limpiarTodo() {
+  datosConfig = { maestros: [], grupos: [], aulas: [] };
+  horarioGenerado = [];
   renderListas();
-  panelResultado.hidden = true;
-  contenedorHorario.innerHTML = "";
-  resumenEl.textContent = "";
-  estadoEl.textContent = "";
-  estadoEl.className = "estado";
-});
+  document.getElementById("panel-resultado").hidden = true;
+  document.getElementById("contenedor-tabla-maestro").innerHTML = "";
+  document.getElementById("contenedor-reticula-grupo").innerHTML = "";
+  document.getElementById("resumen").textContent = "";
+  document.getElementById("estado").textContent = "";
+  document.getElementById("estado").className = "estado";
+  document.getElementById("select-maestro").innerHTML = '<option value="">-- Maestro --</option>';
+  document.getElementById("select-grupo").innerHTML = '<option value="">-- Grupo --</option>';
+  document.getElementById("btn-exportar-csv").disabled = true;
+}
 
-// ---------------------------------------------------------------------------
-// Inicializaci�n
-// ---------------------------------------------------------------------------
+function exportarCSV() {
+  if (horarioGenerado.length === 0) return;
+  const cabeceras = ["Grupo", "Materia", "Maestro", "Aula", "Día", "Hora"];
+  const filas = horarioGenerado.map(c => [
+    c.grupo || "",
+    capitalize(c.materia),
+    capitalize(c.maestro),
+    c.aula || "",
+    formatoDia(c.dia),
+    c.bloque || c.hora_inicio || ""
+  ]);
+  const csvContent = [cabeceras, ...filas]
+    .map(fila => fila.map(valor => `"${String(valor).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const enlace = document.createElement("a");
+  enlace.href = url;
+  enlace.download = "horario.csv";
+  enlace.style.display = "none";
+  document.body.appendChild(enlace);
+  enlace.click();
+  document.body.removeChild(enlace);
+  URL.revokeObjectURL(url);
+}
 
+// ---------- Init ----------
+document.getElementById("btn-generar").addEventListener("click", generarHorario);
+document.getElementById("btn-limpiar").addEventListener("click", limpiarTodo);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarEdicionGrupo(); });
+cargarDatosPorDefecto();
 renderListas();
-setupFormularios();
+setupForms();
+actualizarChecks();

@@ -17,14 +17,21 @@
       <h2>Configuraci&oacute;n</h2>
       <div class="config-grid">
 
-        <!-- Profesores -->
+        <!-- Profesores / Maestros -->
         <div class="config-card">
-          <h3>Profesores</h3>
-          <ul id="lista-profesores" class="lista-datos"></ul>
+          <h3>Maestros</h3>
+          <ul id="lista-maestros" class="lista-datos"></ul>
           <div class="form-agregar">
-            <input type="text" id="input-prof-nombre" placeholder="Nombre">
-            <input type="text" id="input-prof-materia" placeholder="Materia">
-            <button type="button" id="btn-agregar-profesor" class="btn btn-sm btn-success">Agregar</button>
+            <label class="field-label" for="input-m-nombre">Nombre</label>
+            <input type="text" id="input-m-nombre" placeholder="Nombre" required>
+            <label class="field-label" for="input-m-materias">Materias (separadas por coma)</label>
+            <input type="text" id="input-m-materias" placeholder="Matemáticas, Física" required>
+            <label class="field-label" for="input-m-entrada">Entrada</label>
+            <input type="time" id="input-m-entrada" required>
+            <label class="field-label" for="input-m-salida">Salida</label>
+            <input type="time" id="input-m-salida" required>
+            <button type="button" id="btn-agregar-maestro" class="btn btn-sm btn-success">Agregar</button>
+            <span id="error-maestro" class="error-msg" aria-live="polite"></span>
           </div>
         </div>
 
@@ -33,46 +40,38 @@
           <h3>Grupos</h3>
           <ul id="lista-grupos" class="lista-datos"></ul>
           <div class="form-agregar">
-            <input type="text" id="input-grupo-nombre" placeholder="Nombre (grupo_a)">
-            <input type="number" id="input-grupo-alumnos" placeholder="Alumnos" min="1">
-            <input type="text" id="input-grupo-materia" placeholder="Materia">
+            <label class="field-label" for="input-g-nombre">Nombre (ej. Grupo A)</label>
+            <input type="text" id="input-g-nombre" placeholder="Nombre" required>
+            <fieldset class="checkboxes-container">
+              <legend>Materias</legend>
+              <div id="checkboxes-materias-grupo"></div>
+            </fieldset>
             <button type="button" id="btn-agregar-grupo" class="btn btn-sm btn-success">Agregar</button>
+            <span id="error-grupo" class="error-msg" aria-live="polite"></span>
           </div>
         </div>
 
-        <!-- Salones -->
+        <!-- Aulas -->
         <div class="config-card">
-          <h3>Salones</h3>
-          <ul id="lista-salones" class="lista-datos"></ul>
+          <h3>Aulas</h3>
+          <ul id="lista-aulas" class="lista-datos"></ul>
           <div class="form-agregar">
-            <input type="text" id="input-salon-nombre" placeholder="Nombre (lab_1)">
-            <input type="number" id="input-salon-capacidad" placeholder="Capacidad" min="1">
-            <input type="text" id="input-salon-equipo" placeholder="Equipo">
-            <button type="button" id="btn-agregar-salon" class="btn btn-sm btn-success">Agregar</button>
-          </div>
-        </div>
-
-        <!-- Disponibilidades -->
-        <div class="config-card">
-          <h3>Disponibilidades</h3>
-          <ul id="lista-disponibilidades" class="lista-datos"></ul>
-          <div class="form-agregar">
-            <input type="text" id="input-disp-profesor" placeholder="Profesor">
-            <select id="input-disp-dia">
-              <option value="lunes">Lunes</option>
-              <option value="martes">Martes</option>
-              <option value="miercoles">Mi&eacute;rcoles</option>
-              <option value="jueves">Jueves</option>
-              <option value="viernes">Viernes</option>
+            <label class="field-label" for="input-a-nombre">Nombre</label>
+            <input type="text" id="input-a-nombre" placeholder="Nombre" required>
+            <label class="field-label" for="input-a-tipo">Tipo</label>
+            <select id="input-a-tipo" required>
+              <option value="">-- Tipo --</option>
+              <option value="salón">Salón</option>
+              <option value="laboratorio de computo">Laboratorio de computo</option>
+              <option value="auditorio">Auditorio</option>
+              <option value="taller">Taller</option>
             </select>
-            <select id="input-disp-hora">
-              <option value="h_8_10">08:00 - 10:00</option>
-              <option value="h_10_12">10:00 - 12:00</option>
-              <option value="h_12_14">12:00 - 14:00</option>
-              <option value="h_14_16">14:00 - 16:00</option>
-              <option value="h_16_18">16:00 - 18:00</option>
-            </select>
-            <button type="button" id="btn-agregar-disp" class="btn btn-sm btn-success">Agregar</button>
+            <fieldset class="checkboxes-container">
+              <legend>Materias útiles</legend>
+              <div id="checkboxes-materias-aula"></div>
+            </fieldset>
+            <button type="button" id="btn-agregar-aula" class="btn btn-sm btn-success">Agregar</button>
+            <span id="error-aula" class="error-msg" aria-live="polite"></span>
           </div>
         </div>
 
@@ -83,16 +82,46 @@
       <div class="acciones-group">
         <button type="button" id="btn-generar" class="btn btn-primary">Generar Horario</button>
         <button type="button" id="btn-limpiar" class="btn btn-secondary">Limpiar Todo</button>
+        <button type="button" id="btn-exportar-csv" class="btn btn-export" disabled>Exportar CSV</button>
       </div>
       <div id="estado" class="estado"></div>
     </section>
 
     <section class="panel resultado" id="panel-resultado" hidden>
       <h2>Horario Generado</h2>
-      <div class="tabla-horario" id="contenedor-horario"></div>
+      <div class="filtros">
+        <label>Maestro: <select id="select-maestro"><option value="">-- Maestro --</option></select></label>
+        <label>Grupo: <select id="select-grupo"><option value="">-- Grupo --</option></select></label>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="vista-maestro">Por Maestro</button>
+        <button class="tab-btn" data-tab="vista-grupo">Por Grupo</button>
+      </div>
+      <div id="vista-maestro" class="tab-content active">
+        <div id="contenedor-tabla-maestro"></div>
+      </div>
+      <div id="vista-grupo" class="tab-content">
+        <div id="contenedor-reticula-grupo"></div>
+      </div>
       <div id="resumen" class="resumen"></div>
     </section>
   </main>
+
+  <div id="modal-edicion-grupo" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="titulo-edicion-grupo">Editar materias de Grupo</h3>
+        <button type="button" id="btn-cerrar-edicion-grupo" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="checkboxes-edicion-grupo"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancelar-edicion-grupo" class="btn btn-secondary">Cancelar</button>
+        <button type="button" id="btn-guardar-edicion-grupo" class="btn btn-success">Guardar</button>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <p>&copy; 2026 Generador de Horarios - Programaci&oacute;n L&oacute;gica</p>
