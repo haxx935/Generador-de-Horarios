@@ -1,0 +1,59 @@
+{
+  "usuarios": [
+    {
+      "id": "jefe-001",
+      "usuario": "jefe",
+      "nombre": "Lic. Ana Torres",
+      "rol": "jefe",
+      "activo": true,
+      "area": "Área Académica",
+      "salt": "10eddb17f8330978ab3adaae496a1197",
+      "contrasena_hash": "2091989ad2bfb852e8b23a3830a54c39e7629e3a18c84235b10dcad9f7033aa3"
+    },
+    {
+      "id": "maestro-001",
+      "usuario": "maestro",
+      "nombre": "Prof. Matemáticas",
+      "rol": "maestro",
+      "activo": true,
+      "materias": [
+        "Matemáticas"
+      ],
+      "salt": "5a2a3ac6643e53cfd5332f403aa0ed79",
+      "contrasena_hash": "be8288a770b568aba321c64e24059741c5e1c72b4f63c10a1f37dc9649de0887"
+    },
+    {
+      "id": "alumno-001",
+      "usuario": "alumno",
+      "nombre": "Carlos López",
+      "rol": "alumno",
+      "activo": true,
+      "semestre": 3,
+      "grupo": "Grupo A",
+      "materias_aprobadas": [
+        "Matemáticas",
+        "Física",
+        "Historia"
+      ],
+      "kardex": [
+        {
+          "materia": "Matemáticas",
+          "calificacion": 9,
+          "semestre": 1
+        },
+        {
+          "materia": "Física",
+          "calificacion": 8,
+          "semestre": 2
+        },
+        {
+          "materia": "Historia",
+          "calificacion": 9,
+          "semestre": 2
+        }
+      ],
+      "salt": "8439b46ad0b55a2df257e653efada019",
+      "contrasena_hash": "28a40d6a6490431d7f6f08ed507c30c00ff5b02df21db4286880452c81a8e25d"
+    }
+  ]
+}

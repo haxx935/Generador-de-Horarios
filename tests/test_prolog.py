@@ -269,9 +269,12 @@ def test_sin_solucion_devuelve_parcial_y_no_cubiertas(prolog):
 
 @pytest.fixture
 def api_client():
+    """Cliente Flask autenticado como jefe (el generador es sólo para jefe)."""
     from api import app
     app.config["TESTING"] = True
     with app.test_client() as client:
+        token = client.post("/api/login-demo", json={"rol": "jefe"}).get_json()["token"]
+        client.environ_base["HTTP_AUTHORIZATION"] = f"Bearer {token}"
         yield client
 
 

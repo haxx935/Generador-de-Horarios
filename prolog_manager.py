@@ -45,6 +45,34 @@ PREDICADOS_DINAMICOS = [
     "cupo_semana_acumulado/4",
 ]
 
+# Predicados de autorización. Se declaran por separado (NO en PREDICADOS_DINAMICOS)
+# para que la creación de un HorarioGenerator no borre usuarios ni sesiones activas:
+# todos los PrologManager comparten un único motor pyswip por proceso.
+PREDICADOS_AUTORIZACION = [
+    "usuario_registrado/6",  # (Id, Usuario, Hash, Salt, Rol, Activo)
+    "rol_permitido/2",       # (Rol, Portal)
+    "sesion_activa/3",       # (Token, Id, Rol)
+    "credencial_valida/4",   # (Usuario, HashCalculado, Id, Rol)
+    "usuario_permitido/3",   # (Usuario, Id, Rol)
+    "acceso_permitido/3",    # (Token, Portal, Rol)
+    "token_valido/1",        # (Token)
+    "sesion_id/2",           # (Token, Id)
+    "sesion_rol/2",          # (Token, Rol)
+]
+
+# Reglas (no hechos de datos) que se recompilan al crear un AuthService.
+# usuario_registrado/6 y sesion_activa/3 se gestionan explícitamente desde
+# auth_service.py y por eso NO se incluyen aquí.
+REGLAS_AUTORIZACION = [
+    "rol_permitido/2",
+    "credencial_valida/4",
+    "usuario_permitido/3",
+    "acceso_permitido/3",
+    "token_valido/1",
+    "sesion_id/2",
+    "sesion_rol/2",
+]
+
 
 def atom(valor) -> str:
     """Convierte un valor a átomo Prolog seguro (con comillas simples)."""
@@ -58,6 +86,7 @@ class PrologManager:
     def __init__(self):
         self.prolog = Prolog()
         self._reglas_definidas = False
+        self._reglas_autorizacion_definidas = False
         self._preparar_base()
 
     # ------------------------------------------------------------------
@@ -80,6 +109,63 @@ class PrologManager:
         if not self._reglas_definidas:
             self._definir_reglas()
             self._reglas_definidas = True
+
+    def asegurar_reglas_autorizacion(self):
+        """Declara y compila las reglas declarativas de acceso y sesión.
+
+        Estas reglas viven en el mismo motor Prolog que el generador de horarios.
+        Se declaran una sola vez por instancia; los hechos de usuario/sesión se
+        cargan desde ``auth_service.py`` y no se confunden con los hechos del
+        horario.
+        """
+        with PrologManager._lock:
+            if not self._reglas_autorizacion_definidas:
+                for pred in PREDICADOS_AUTORIZACION:
+                    list(self.prolog.query(f"dynamic({pred})"))
+                self._definir_reglas_autorizacion()
+                self._reglas_autorizacion_definidas = True
+
+    def _definir_reglas_autorizacion(self):
+        """Reglas Prolog para credenciales, roles permitidos y sesiones activas."""
+        logger.info("--- DECLARACIÓN DE REGLAS DE AUTORIZACIÓN ---")
+
+        # Evita reglas duplicadas si se crea más de un AuthService en el proceso.
+        for pred in REGLAS_AUTORIZACION:
+            nombre, aridad = pred.split("/")
+            variables = ", ".join(["_"] * int(aridad))
+            list(self.prolog.query(f"retractall({nombre}({variables}))"))
+
+        # Un rol sólo puede entrar a su propio portal.
+        self.prolog.assertz(r"rol_permitido(jefe, jefe)")
+        self.prolog.assertz(r"rol_permitido(maestro, maestro)")
+        self.prolog.assertz(r"rol_permitido(alumno, alumno)")
+
+        # La contraseña se valida en Python por ser PBKDF2; Prolog comprueba
+        # que el hash calculado coincide con el guardado y que el usuario está activo.
+        self.prolog.assertz(
+            r"credencial_valida(Usuario, HashCalculado, Id, Rol) :- "
+            r"usuario_registrado(Id, Usuario, HashGuardado, _, Rol, true), "
+            r"HashGuardado == HashCalculado"
+        )
+
+        # Regla de compatibilidad para registros heredados con contraseña en texto plano.
+        self.prolog.assertz(
+            r"usuario_permitido(Usuario, Id, Rol) :- "
+            r"usuario_registrado(Id, Usuario, _, _, Rol, true), "
+            r"rol_permitido(Rol, _)"
+        )
+
+        # Una sesión sólo es válida si tiene token activo Y un rol autorizado.
+        self.prolog.assertz(
+            r"acceso_permitido(Token, Portal, Rol) :- "
+            r"sesion_activa(Token, _, Rol), "
+            r"rol_permitido(Rol, Portal)"
+        )
+        self.prolog.assertz(r"token_valido(Token) :- sesion_activa(Token, _, _)")
+        self.prolog.assertz(r"sesion_id(Token, Id) :- sesion_activa(Token, Id, _)")
+        self.prolog.assertz(r"sesion_rol(Token, Rol) :- sesion_activa(Token, _, Rol)")
+
+        logger.info("Reglas de autorización compiladas correctamente")
 
     def _definir_reglas(self):
         """Define todas las reglas lógicas del sistema de horarios en Prolog.

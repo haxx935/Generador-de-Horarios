@@ -580,6 +580,130 @@ tr:last-child td {
   color: #166534;
 }
 
+/* ================= LOGIN, SESIÓN Y PORTALES POR ROL ================= */
+.login-panel {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.login-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.login-panel input {
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: inherit;
+  color: var(--color-text);
+}
+
+.login-panel input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.login-subtitulo {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.btn-login {
+  margin-top: 0.9rem;
+  width: 100%;
+}
+
+.demo-accesos {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.demo-accesos h3 {
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  margin-bottom: 0.6rem;
+}
+
+.demo-botones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.demo-botones .btn {
+  flex: 1;
+  min-width: 130px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.barra-sesion {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+
+.badge {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 0.1rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge[data-rol="jefe"] { background-color: #fef3c7; color: #92400e; border-color: #fde68a; }
+.badge[data-rol="alumno"] { background-color: #dcfce7; color: #166534; border-color: #bbf7d0; }
+
+.perfil-card {
+  background-color: #fafbfc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.perfil-card p {
+  margin: 0.2rem 0;
+}
+
+.kardex {
+  margin: 1rem 0;
+}
+
+.kardex h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.kardex .lista-materias {
+  margin: 0.35rem 0 0.8rem 1.2rem;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.kardex table {
+  max-width: 520px;
+}
+
+.texto-suave {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
 footer {
   background-color: var(--color-surface);
   border-top: 1px solid var(--color-border);
